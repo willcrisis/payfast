@@ -27,9 +27,11 @@ module.exports = function(app) {
 
         dao.incluir(pagamento, function(err, result) {
             if (err) {
-                return next(err);
+                res.status(500).json(err);
+                return;
             }
-            res.json(result);
+            pagamento.id = result.insertId;
+            res.location('/pagamentos/' + result.insertId).status(201).json(pagamento);
         });
         conn.end();
     });
