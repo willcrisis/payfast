@@ -15,7 +15,7 @@ PagamentoDao.prototype.incluir = function(pagamento, callback) {
 };
 
 PagamentoDao.prototype.alterar = function(pagamento, callback) {
-    this._connection.query('update pagamento set ? where id = ?', pagamento, pagamento.id, callback);
+    this._connection.query('update pagamento set ? where id = ?', [pagamento, pagamento.id], callback);
 };
 
 PagamentoDao.prototype.excluir = function(id, callback) {

@@ -1,38 +1,12 @@
-module.exports = function(app) {
-    app.get('/pagamentos', function(req, res) {
-        console.log('requisição recebida na porta 3000');
-        res.send('oi!');
-    });
+module.exports = function (app) {
+    const api = app.api.pagamentos(app);
 
-    app.post('/pagamentos', function(req, res, next) {
+    app.route('/pagamentos')
+        .get(api.listar)
+        .post(api.incluir);
 
-        req.assert('forma_pagamento', 'required').notEmpty();
-        req.assert('valor', 'required').notEmpty();
-        req.assert('valor', 'invalid format').isFloat();
-        req.assert('moeda', 'required').notEmpty();
-        req.assert('moeda', 'invalid format').isLength({min: 3, max: 3});
-
-        var errors = req.validationErrors();
-        if (errors) {
-            res.status(400).json(errors);
-            return;
-        }
-
-        var pagamento = req.body;
-        pagamento.status = 'C';
-        pagamento.data = new Date();
-
-        var conn = app.persistence.connectionFactory();
-        var dao = new app.persistence.PagamentoDao(conn);
-
-        dao.incluir(pagamento, function(err, result) {
-            if (err) {
-                res.status(500).json(err);
-                return;
-            }
-            pagamento.id = result.insertId;
-            res.location('/pagamentos/' + result.insertId).status(201).json(pagamento);
-        });
-        conn.end();
-    });
+    app.route('/pagamentos/:id')
+        .get(api.obter)
+        .put(api.alterar)
+        .delete(api.excluir);
 };

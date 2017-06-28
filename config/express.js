@@ -11,6 +11,7 @@ module.exports = function() {
 
     consign({cwd: 'app'})
         .include('persistence')
+        .then('api')
         .then('routes')
         .into(app);
 
